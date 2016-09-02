@@ -14,3 +14,5 @@ if (__DEV__) {
 }
 
 export default base;
+
+export const currentUser = () => (base.app().auth().currentUser || { email: 'k@c.com' });

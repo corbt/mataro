@@ -15,7 +15,8 @@ import {
 } from 'react-native';
 
 import base from '../base';
-import { Background, MemoryTitle } from '../components';
+import { Background, MemoryTitle, Button } from '../components';
+import Router from '../navigation';
 
 export default class Login extends Component {
   static route = {
@@ -29,6 +30,12 @@ export default class Login extends Component {
 
   state:{ email:string, password:string, isAuthenticating:boolean } =
     { email: '', password: '', isAuthenticating: false };
+
+  componentDidMount() {
+    if (__DEV__) {
+      base.authWithPassword({ email: 'k@c.com', password: 'aaaaaa' }, this._handleAuth)
+    }
+  }
 
   _logIn = () => {
     LayoutAnimation.easeInEaseOut();
@@ -46,11 +53,10 @@ export default class Login extends Component {
 
   _handleAuth = (error, user) => {
     if (error) {
-      LayoutAnimation.easeInEaseOut();
       this.setState({ isAuthenticating: false });
       Alert.alert('Authentication Error', error.message);
     } else {
-      console.log(user);
+      this.props.navigator.push(Router.getRoute('main'));
     }
   };
 
@@ -87,13 +93,7 @@ export default class Login extends Component {
               ? <ActivityIndicator style={s.progress} />
               : (
                 <View>
-                  <View style={s.buttonWrapper}>
-                    <TouchableHighlight onPress={this._logIn}>
-                      <View style={s.button}>
-                        <Text style={s.buttonText}>Log in!</Text>
-                      </View>
-                    </TouchableHighlight>
-                  </View>
+                  <Button text="Log in!" onPress={this._logIn} />
                   <TouchableOpacity onPress={this._createAccount} style={s.signup}>
                     <Text style={s.signupText}>Sign Up</Text>
                   </TouchableOpacity>
@@ -127,21 +127,6 @@ const s = StyleSheet.create({
   input: {
     height: 40,
     paddingHorizontal: 12,
-  },
-  buttonWrapper: {
-    marginTop: 5,
-    borderRadius: 5,
-    overflow: 'hidden',
-  },
-  button: {
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#E91E63',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   signup: {
     padding: 10,
